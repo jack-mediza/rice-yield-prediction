@@ -1,0 +1,175 @@
+{
+  "target_col": "Rice_Yield_t_ha",
+  "feature_cols": [
+    "Nitrogen_kg_ha",
+    "Phosphorus_kg_ha",
+    "Potassium_kg_ha",
+    "Rainfall_mm",
+    "Temperature_C",
+    "Irrigation_mm",
+    "Fertilizer_kg_ha",
+    "Crop_Duration_days",
+    "Cultivated_Area_ha",
+    "Soil_pH",
+    "Humidity_pct",
+    "Seed_Rate_kg_ha"
+  ],
+  "numeric_features": [
+    "Nitrogen_kg_ha",
+    "Phosphorus_kg_ha",
+    "Potassium_kg_ha",
+    "Rainfall_mm",
+    "Temperature_C",
+    "Irrigation_mm",
+    "Fertilizer_kg_ha",
+    "Crop_Duration_days",
+    "Cultivated_Area_ha",
+    "Soil_pH",
+    "Humidity_pct",
+    "Seed_Rate_kg_ha"
+  ],
+  "categorical_features": [],
+  "feature_names_out": [
+    "num__Nitrogen_kg_ha",
+    "num__Phosphorus_kg_ha",
+    "num__Potassium_kg_ha",
+    "num__Rainfall_mm",
+    "num__Temperature_C",
+    "num__Irrigation_mm",
+    "num__Fertilizer_kg_ha",
+    "num__Crop_Duration_days",
+    "num__Cultivated_Area_ha",
+    "num__Soil_pH",
+    "num__Humidity_pct",
+    "num__Seed_Rate_kg_ha"
+  ],
+  "best_model_name": "Gradient Boosting",
+  "best_metrics": {
+    "MAE": 0.4101,
+    "RMSE": 0.4975,
+    "R2": 0.608
+  },
+  "all_model_results": {
+    "Linear Regression": {
+      "MAE": 0.4595,
+      "RMSE": 0.5614,
+      "R2": 0.5009
+    },
+    "Random Forest": {
+      "MAE": 0.448,
+      "RMSE": 0.5458,
+      "R2": 0.5283
+    },
+    "Gradient Boosting": {
+      "MAE": 0.4101,
+      "RMSE": 0.4975,
+      "R2": 0.608
+    },
+    "XGBoost": {
+      "MAE": 0.4043,
+      "RMSE": 0.5167,
+      "R2": 0.5772
+    },
+    "Random Forest (Tuned)": {
+      "MAE": 0.4408,
+      "RMSE": 0.5392,
+      "R2": 0.5396
+    },
+    "XGBoost (Tuned)": {
+      "MAE": 0.4105,
+      "RMSE": 0.5022,
+      "R2": 0.6006
+    }
+  },
+  "cv_results": {
+    "Linear Regression": {
+      "cv_r2_mean": 0.4995,
+      "cv_r2_std": 0.0264,
+      "cv_r2_scores": [
+        0.5074,
+        0.5207,
+        0.5077,
+        0.4475,
+        0.5139
+      ]
+    },
+    "Random Forest": {
+      "cv_r2_mean": 0.4816,
+      "cv_r2_std": 0.0291,
+      "cv_r2_scores": [
+        0.4937,
+        0.5256,
+        0.4894,
+        0.4445,
+        0.4549
+      ]
+    },
+    "Gradient Boosting": {
+      "cv_r2_mean": 0.568,
+      "cv_r2_std": 0.0281,
+      "cv_r2_scores": [
+        0.572,
+        0.6141,
+        0.5719,
+        0.5539,
+        0.5282
+      ]
+    },
+    "XGBoost": {
+      "cv_r2_mean": 0.4857,
+      "cv_r2_std": 0.023,
+      "cv_r2_scores": [
+        0.4472,
+        0.4962,
+        0.4724,
+        0.5031,
+        0.5098
+      ]
+    }
+  },
+  "correlations": {
+    "Nitrogen_kg_ha": 0.3273,
+    "Phosphorus_kg_ha": 0.2189,
+    "Potassium_kg_ha": 0.1897,
+    "Rainfall_mm": 0.4286,
+    "Temperature_C": 0.0508,
+    "Irrigation_mm": 0.1742,
+    "Fertilizer_kg_ha": 0.1941,
+    "Crop_Duration_days": 0.2103,
+    "Cultivated_Area_ha": 0.0107,
+    "Soil_pH": -0.0072,
+    "Humidity_pct": 0.219,
+    "Seed_Rate_kg_ha": -0.0149
+  },
+  "feature_importance": {
+    "num__Rainfall_mm": 0.232569,
+    "num__Temperature_C": 0.154266,
+    "num__Nitrogen_kg_ha": 0.143695,
+    "num__Phosphorus_kg_ha": 0.087227,
+    "num__Humidity_pct": 0.071631,
+    "num__Soil_pH": 0.070633,
+    "num__Crop_Duration_days": 0.065661,
+    "num__Fertilizer_kg_ha": 0.052849,
+    "num__Irrigation_mm": 0.052211,
+    "num__Potassium_kg_ha": 0.048188,
+    "num__Seed_Rate_kg_ha": 0.011497,
+    "num__Cultivated_Area_ha": 0.009573
+  },
+  "tuned_params": {
+    "Random Forest": {
+      "n_estimators": 200,
+      "min_samples_split": 2,
+      "max_depth": 20
+    },
+    "XGBoost": {
+      "n_estimators": 200,
+      "max_depth": 3,
+      "learning_rate": 0.05
+    }
+  },
+  "n_train": 800,
+  "n_test": 200,
+  "target_min": 5.55,
+  "target_max": 9.5,
+  "target_mean": 8.10385
+}

@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block title %}Training Progress — Rice Yield Prediction{% endblock %}
+
+{% block content %}
+<h2 class="fw-bold mb-1"><i class="fas fa-brain text-success me-2"></i>Model Training Progress</h2>
+<p class="text-muted mb-4">Training is running — please wait. Do not close this tab.</p>
+
+<div class="row g-4">
+  <div class="col-lg-8 mx-auto">
+    <!-- Status card -->
+    <div class="card border-0 shadow-sm mb-4" id="statusCard">
+      <div class="card-header bg-primary text-white fw-semibold d-flex align-items-center" id="statusHeader">
+        <div class="spinner-border spinner-border-sm me-2" role="status" id="spinner"></div>
+        <span id="statusTitle">Training in progress…</span>
+      </div>
+      <div class="card-body p-4">
+        <!-- Progress bar -->
+        <div class="mb-4">
+          <div class="d-flex justify-content-between mb-1">
+            <span class="small fw-semibold" id="progressLabel">Initializing…</span>
+            <span class="small text-muted" id="progressPct">0%</span>
+          </div>
+          <div class="progress" style="height:20px">
+            <div class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+                 id="progressBar" role="progressbar" style="width:0%"></div>
+          </div>
+        </div>
+
+        <!-- Log output -->
+        <div class="bg-dark text-success rounded p-3 font-monospace small" 
+             id="logBox" style="max-height:350px;overflow-y:auto;min-height:100px">
+          <div id="logContent"><span class="text-muted">Waiting for training to start…</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success panel (hidden initially) -->
+    <div class="card border-0 shadow-sm border-success d-none" id="successCard">
+      <div class="card-header bg-success text-white fw-bold">
+        <i class="fas fa-check-circle me-2"></i>Training Complete!
+      </div>
+      <div class="card-body text-center p-4">
+        <i class="fas fa-trophy fa-4x text-warning mb-3"></i>
+        <h4 class="fw-bold">Models Trained Successfully</h4>
+        <p class="text-muted mb-4">All four models have been evaluated. The best model has been saved.</p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+          <a href="{{ url_for('results') }}" class="btn btn-success btn-lg">
+            <i class="fas fa-trophy me-2"></i>View Results
+          </a>
+          <a href="{{ url_for('prediction') }}" class="btn btn-primary btn-lg">
+            <i class="fas fa-magic me-2"></i>Make Prediction
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error panel (hidden initially) -->
+    <div class="card border-0 shadow-sm border-danger d-none" id="errorCard">
+      <div class="card-header bg-danger text-white fw-bold">
+        <i class="fas fa-exclamation-triangle me-2"></i>Training Failed
+      </div>
+      <div class="card-body p-4">
+        <div class="alert alert-danger" id="errorMsg"></div>
+        <a href="{{ url_for('training') }}" class="btn btn-danger">
+          <i class="fas fa-redo me-2"></i>Try Again
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const STEPS = [
+  'Step 1: Validating data',
+  'Step 2: Splitting data',
+  'Step 3: Building preprocessing',
+  'Step 4: Computing correlation',
+  'Step 5: Training models',
+  'Step 6: Cross-validation',
+  'Step 7: Hyperparameter tuning',
+  'Step 8: Selecting best model',
+  'Step 9: Computing feature importance',
+  'Step 10: Saving model artifacts',
+];
+
+let prevLen = 0;
+let pollInterval;
+
+function guessProgress(logs) {
+  let best = 0;
+  STEPS.forEach((step, i) => {
+    if (logs.some(l => l.includes(`Step ${i+1}`))) {
+      best = Math.round(((i + 1) / STEPS.length) * 100);
+    }
+  });
+  return best;
+}
+
+function poll() {
+  fetch('/api/training_progress')
+    .then(r => r.json())
+    .then(data => {
+      const logs = data.progress || [];
+
+      // Update log
+      if (logs.length > prevLen) {
+        const logContent = document.getElementById('logContent');
+        const newLines = logs.slice(prevLen).map(l =>
+          `<div class="log-line">&gt; ${l.replace(/</g,'&lt;')}</div>`
+        ).join('');
+        if (prevLen === 0) logContent.innerHTML = '';
+        logContent.innerHTML += newLines;
+        const logBox = document.getElementById('logBox');
+        logBox.scrollTop = logBox.scrollHeight;
+        prevLen = logs.length;
+      }
+
+      // Update progress bar
+      const pct = guessProgress(logs);
+      document.getElementById('progressBar').style.width = pct + '%';
+      document.getElementById('progressPct').textContent = pct + '%';
+
+      // Update label
+      const lastStep = STEPS.slice().reverse().find(s =>
+        logs.some(l => l.includes(s.split(':')[0]))
+      );
+      if (lastStep) document.getElementById('progressLabel').textContent = lastStep;
+
+      if (data.done) {
+        clearInterval(pollInterval);
+        document.getElementById('progressBar').style.width = '100%';
+        document.getElementById('progressPct').textContent = '100%';
+        document.getElementById('spinner').classList.add('d-none');
+
+        if (data.error) {
+          document.getElementById('statusCard').classList.add('d-none');
+          const errCard = document.getElementById('errorCard');
+          errCard.classList.remove('d-none');
+          document.getElementById('errorMsg').textContent = data.error;
+        } else {
+          document.getElementById('statusHeader').className = 'card-header bg-success text-white fw-semibold d-flex align-items-center';
+          document.getElementById('statusTitle').textContent = 'Training Complete!';
+          setTimeout(() => {
+            document.getElementById('statusCard').classList.add('d-none');
+            document.getElementById('successCard').classList.remove('d-none');
+          }, 1000);
+        }
+      }
+    })
+    .catch(() => { /* ignore transient errors */ });
+}
+
+// Start polling every 800ms
+pollInterval = setInterval(poll, 800);
+poll(); // immediate first call
+</script>
+{% endblock %}

@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block title %}Home — Rice Yield Prediction{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<div class="hero-section rounded-4 p-5 mb-5 text-center text-white position-relative overflow-hidden">
+  <div class="hero-overlay"></div>
+  <div class="position-relative z-1">
+    <div class="mb-3">
+      <i class="fas fa-seedling hero-icon"></i>
+    </div>
+    <h1 class="display-5 fw-bold mb-3">
+      Multi-Factor Prediction of Rice Yield<br>
+      <span class="text-warning">Using Agronomical Factors</span>
+    </h1>
+    <p class="lead mb-4 opacity-90">
+      An AI/ML web application that uses multiple regression models to predict
+      rice crop yield from agronomical data — empowering smarter farming decisions.
+    </p>
+    <div class="d-flex gap-3 justify-content-center flex-wrap">
+      <a href="{{ url_for('upload') }}" class="btn btn-warning btn-lg fw-semibold px-4">
+        <i class="fas fa-upload me-2"></i>Upload Dataset
+      </a>
+      <a href="{{ url_for('use_synthetic') }}" class="btn btn-outline-light btn-lg px-4">
+        <i class="fas fa-flask me-2"></i>Try with Demo Data
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Status banner if trained -->
+{% if trained and meta %}
+<div class="alert alert-success d-flex align-items-center mb-4" role="alert">
+  <i class="fas fa-check-circle fa-lg me-3"></i>
+  <div>
+    <strong>Models trained!</strong>
+    Best model: <strong>{{ meta.best_model_name }}</strong> —
+    R² = <strong>{{ meta.best_metrics.R2 }}</strong>,
+    RMSE = <strong>{{ meta.best_metrics.RMSE }}</strong>
+    <a href="{{ url_for('prediction') }}" class="btn btn-sm btn-success ms-3">Predict Now</a>
+  </div>
+</div>
+{% endif %}
+
+<!-- How it works -->
+<h2 class="fw-bold mb-4 text-center"><i class="fas fa-route text-success me-2"></i>How It Works</h2>
+<div class="row g-4 mb-5">
+  {% set steps = [
+    ('1', 'upload', 'Upload Dataset', 'Upload your rice farming data as a CSV or XLSX file. The system automatically inspects columns, detects types, and validates the data.'),
+    ('2', 'chart-bar', 'Explore Data', 'Interactive charts show yield distributions, feature correlations, and statistical summaries of your agronomical factors.'),
+    ('3', 'brain', 'Train ML Models', 'Four regression models are trained: Linear Regression, Random Forest, Gradient Boosting, and XGBoost — with cross-validation and hyperparameter tuning.'),
+    ('4', 'trophy', 'Best Model Selected', 'Models are evaluated by MAE, RMSE, and R². The best-performing model is automatically selected and saved.'),
+    ('5', 'magic', 'Predict Yield', 'Enter agronomical values manually. The saved model instantly predicts the expected rice yield in tonnes/hectare.'),
+  ] %}
+  {% for num, icon, title, desc in steps %}
+  <div class="col-md-4 col-lg">
+    <div class="card h-100 border-0 shadow-sm text-center p-3 step-card">
+      <div class="step-num mx-auto mb-3">{{ num }}</div>
+      <div class="mb-2"><i class="fas fa-{{ icon }} fa-2x text-success"></i></div>
+      <h6 class="fw-bold">{{ title }}</h6>
+      <p class="text-muted small mb-0">{{ desc }}</p>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Why rice yield prediction -->
+<div class="row g-4 mb-5">
+  <div class="col-lg-6">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body p-4">
+        <h4 class="fw-bold mb-3"><i class="fas fa-globe-asia text-success me-2"></i>Why Rice Yield Prediction?</h4>
+        <ul class="list-unstyled">
+          <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Rice feeds over half the world's population</li>
+          <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Accurate forecasting enables better resource allocation</li>
+          <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Helps farmers optimise fertilizer and irrigation</li>
+          <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Supports food security planning and policy</li>
+          <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Reduces waste and environmental impact</li>
+          <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>ML outperforms traditional statistical methods</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body p-4">
+        <h4 class="fw-bold mb-3"><i class="fas fa-leaf text-success me-2"></i>Agronomical Factors Considered</h4>
+        <div class="row g-2">
+          {% for factor in ['Nitrogen (N)', 'Phosphorus (P)', 'Potassium (K)', 'Rainfall', 'Temperature', 'Irrigation', 'Fertilizer', 'Crop Duration', 'Cultivated Area', 'Soil pH', 'Humidity', 'Solar Radiation'] %}
+          <div class="col-6">
+            <span class="badge bg-success-subtle text-success-emphasis border border-success-subtle rounded-pill px-3 py-2 w-100 text-start">
+              <i class="fas fa-circle-dot me-1" style="font-size:0.6em"></i>{{ factor }}
+            </span>
+          </div>
+          {% endfor %}
+        </div>
+        <p class="text-muted small mt-3 mb-0">
+          <i class="fas fa-info-circle me-1"></i>
+          Actual features depend on your uploaded dataset.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ML Models -->
+<h2 class="fw-bold mb-4 text-center"><i class="fas fa-robot text-success me-2"></i>Machine Learning Models</h2>
+<div class="row g-4 mb-5">
+  {% set models = [
+    ('Linear Regression', 'fa-chart-line', 'primary', 'Baseline model establishing linear relationships between agronomical features and yield.'),
+    ('Random Forest', 'fa-tree', 'success', 'Ensemble of decision trees with hyperparameter tuning for robust, high-accuracy predictions.'),
+    ('Gradient Boosting', 'fa-rocket', 'warning', 'Sequential boosting model that builds on errors of previous trees for refined accuracy.'),
+    ('XGBoost', 'fa-bolt', 'danger', 'Extreme gradient boosting — typically the highest-performing model with efficient computation.'),
+  ] %}
+  {% for name, icon, color, desc in models %}
+  <div class="col-md-6 col-lg-3">
+    <div class="card border-0 shadow-sm h-100 text-center p-3">
+      <div class="card-body">
+        <div class="model-icon bg-{{ color }}-subtle rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width:60px;height:60px">
+          <i class="fas {{ icon }} fa-xl text-{{ color }}"></i>
+        </div>
+        <h6 class="fw-bold">{{ name }}</h6>
+        <p class="text-muted small">{{ desc }}</p>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- CTA -->
+<div class="text-center py-4">
+  <a href="{{ url_for('upload') }}" class="btn btn-success btn-lg px-5 me-3">
+    <i class="fas fa-upload me-2"></i>Get Started — Upload Dataset
+  </a>
+  <a href="{{ url_for('about') }}" class="btn btn-outline-secondary btn-lg px-4">
+    <i class="fas fa-info-circle me-2"></i>Learn More
+  </a>
+</div>
+{% endblock %}

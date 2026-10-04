@@ -1,0 +1,131 @@
+/* ── Base ──────────────────────────────────────────────────────────────── */
+body {
+  background-color: #f8f9fa;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* ── Hero ─────────────────────────────────────────────────────────────── */
+.hero-section {
+  background: linear-gradient(135deg, #155724 0%, #1a7a34 40%, #2e9e55 100%);
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.hero-icon {
+  font-size: 4rem;
+  color: rgba(255,255,255,0.85);
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+/* ── Cards ────────────────────────────────────────────────────────────── */
+.card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1) !important;
+}
+
+.kpi-card {
+  transition: transform 0.15s ease;
+}
+
+.kpi-card:hover {
+  transform: translateY(-3px);
+}
+
+/* ── Step card ────────────────────────────────────────────────────────── */
+.step-card {
+  border-top: 3px solid #198754 !important;
+}
+
+.step-num {
+  width: 36px;
+  height: 36px;
+  background: #198754;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+/* ── Pipeline steps ───────────────────────────────────────────────────── */
+.pipeline-num {
+  width: 28px;
+  height: 28px;
+  background: #198754;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+/* ── Upload zone ──────────────────────────────────────────────────────── */
+.upload-zone {
+  border: 2px dashed #198754;
+  background: #f8fff9;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.upload-zone:hover, .upload-zone.drag-over {
+  background: #e8f5e9;
+  border-color: #0f5132;
+}
+
+/* ── Stat card ────────────────────────────────────────────────────────── */
+.stat-card {
+  transition: background 0.2s;
+}
+
+/* ── Footer ───────────────────────────────────────────────────────────── */
+.footer-bar {
+  background: #fff;
+  border-top: 1px solid #dee2e6;
+}
+
+/* ── Log box ──────────────────────────────────────────────────────────── */
+#logBox .log-line {
+  margin-bottom: 2px;
+  line-height: 1.4;
+}
+
+/* ── Table responsive ─────────────────────────────────────────────────── */
+.table th {
+  white-space: nowrap;
+}
+
+/* ── Gauge / range display ────────────────────────────────────────────── */
+.progress {
+  border-radius: 10px;
+}
+
+/* ── Navbar active ────────────────────────────────────────────────────── */
+.navbar-dark .navbar-nav .nav-link.active {
+  font-weight: 600;
+  background: rgba(255,255,255,0.15);
+  border-radius: 6px;
+}
+
+/* ── Responsive adjustments ──────────────────────────────────────────── */
+@media (max-width: 576px) {
+  .hero-section { min-height: 240px; }
+  .hero-icon { font-size: 2.5rem; }
+  .display-3 { font-size: 2rem; }
+}

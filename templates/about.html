@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}About — Rice Yield Prediction{% endblock %}
+
+{% block content %}
+<h2 class="fw-bold mb-1"><i class="fas fa-info-circle text-success me-2"></i>About This Project</h2>
+<p class="text-muted mb-4">Multi-Factor Prediction of Rice Yield Using Agronomical Factors</p>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-header bg-success text-white fw-semibold">Project Overview</div>
+      <div class="card-body p-4">
+        <p>
+          This is a <strong>college AI/ML project</strong> that predicts rice crop yield using
+          multiple agronomical factors and machine learning regression models.
+        </p>
+        <p>
+          Rice is one of the world's most important food crops, feeding over 3 billion people.
+          Accurate yield prediction enables better agricultural planning, optimises resource use,
+          and supports food security initiatives.
+        </p>
+        <p class="mb-0">
+          The system trains four regression models on user-provided agricultural data, automatically
+          selects the best-performing model, and uses it to predict rice yield from new input values.
+        </p>
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-header bg-primary text-white fw-semibold">ML Methodology</div>
+      <div class="card-body p-4">
+        <h6 class="fw-bold"><i class="fas fa-shield-alt text-primary me-2"></i>Data Leakage Prevention</h6>
+        <p class="text-muted small">All preprocessing (imputation, scaling) is fitted exclusively on training data.
+        The test set is only used for final evaluation — never for tuning or cross-validation.</p>
+
+        <h6 class="fw-bold mt-3"><i class="fas fa-rotate text-success me-2"></i>Cross-Validation</h6>
+        <p class="text-muted small">5-fold cross-validation is performed within the training set to give stable
+        performance estimates without touching the final test split.</p>
+
+        <h6 class="fw-bold mt-3"><i class="fas fa-sliders text-warning me-2"></i>Hyperparameter Tuning</h6>
+        <p class="text-muted small">RandomizedSearchCV is used for Random Forest and XGBoost,
+        exploring a reasonable grid of hyperparameters efficiently.</p>
+
+        <h6 class="fw-bold mt-3"><i class="fas fa-trophy text-danger me-2"></i>Model Selection</h6>
+        <p class="text-muted small mb-0">The best model is chosen automatically by highest R² score
+        on the held-out test set. No manual selection or result manipulation.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-header bg-dark text-white fw-semibold">Technology Stack</div>
+      <div class="card-body p-3">
+        {% set tech = [
+          ('Python 3', 'fa-code', 'primary', 'Core programming language'),
+          ('Flask', 'fa-server', 'success', 'Web framework'),
+          ('scikit-learn', 'fa-brain', 'warning', 'ML pipeline & models'),
+          ('XGBoost', 'fa-bolt', 'danger', 'Gradient boosting model'),
+          ('Pandas', 'fa-table', 'info', 'Data processing'),
+          ('NumPy', 'fa-calculator', 'secondary', 'Numerical computing'),
+          ('Bootstrap 5', 'fa-mobile-alt', 'primary', 'Responsive UI'),
+          ('Chart.js', 'fa-chart-bar', 'success', 'Interactive charts'),
+          ('joblib', 'fa-save', 'dark', 'Model serialization'),
+        ] %}
+        {% for name, icon, color, desc in tech %}
+        <div class="d-flex align-items-center mb-2">
+          <span class="badge bg-{{ color }} me-2 py-2 px-2" style="min-width:32px;text-align:center">
+            <i class="fas {{ icon }}"></i>
+          </span>
+          <div>
+            <span class="fw-semibold small">{{ name }}</span>
+            <span class="text-muted small ms-2">— {{ desc }}</span>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-header bg-light fw-semibold">Project Files</div>
+      <div class="card-body p-3">
+        <pre class="small text-muted mb-0">rice-yield-prediction/
+├── app.py
+├── requirements.txt
+├── README.md
+├── dataset/
+├── uploads/
+├── model/
+│   ├── best_model.pkl
+│   ├── preprocessing.pkl
+│   └── metadata.json
+├── training/
+│   └── train_model.py
+├── templates/
+└── static/</pre>
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-warning fw-semibold">Important Note</div>
+      <div class="card-body p-3">
+        <p class="small text-muted mb-0">
+          This is a <strong>100% software project</strong> — no hardware, IoT devices, sensors,
+          or Arduino/Raspberry Pi is involved. All predictions are made using machine learning
+          models trained on CSV/XLSX data through a Python/Flask web application.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="text-center mt-4">
+  <a href="{{ url_for('index') }}" class="btn btn-success btn-lg px-5">
+    <i class="fas fa-home me-2"></i>Back to Home
+  </a>
+</div>
+{% endblock %}

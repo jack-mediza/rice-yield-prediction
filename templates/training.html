@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block title %}Train Models — Rice Yield Prediction{% endblock %}
+
+{% block content %}
+<h2 class="fw-bold mb-1"><i class="fas fa-brain text-success me-2"></i>Model Training</h2>
+<p class="text-muted mb-4">Configure and train all four regression models on your dataset.</p>
+
+{% if trained and meta %}
+<div class="alert alert-success mb-4 d-flex align-items-center">
+  <i class="fas fa-check-circle fa-lg me-3"></i>
+  <div>
+    <strong>Models already trained!</strong> Best model: <strong>{{ meta.best_model_name }}</strong>
+    — R² = {{ meta.best_metrics.R2 }}
+    <a href="{{ url_for('results') }}" class="btn btn-sm btn-success ms-3">View Results</a>
+    <a href="{{ url_for('prediction') }}" class="btn btn-sm btn-outline-success ms-2">Predict Yield</a>
+  </div>
+</div>
+{% endif %}
+
+<div class="row g-4">
+  <!-- Config form -->
+  <div class="col-lg-4">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-success text-white fw-semibold">
+        <i class="fas fa-cog me-2"></i>Training Configuration
+      </div>
+      <div class="card-body p-4">
+        <form method="POST" id="trainForm">
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Target Column (Yield)</label>
+            <select name="target_col" class="form-select">
+              {% for col in numeric_cols %}
+              <option value="{{ col }}" {% if col == suggested_target %}selected{% endif %}>{{ col }}</option>
+              {% endfor %}
+            </select>
+            <div class="form-text">Select the column representing rice yield.</div>
+          </div>
+
+          <div class="mb-4 p-3 bg-light rounded">
+            <p class="fw-semibold small mb-2">Fixed Settings:</p>
+            <ul class="text-muted small mb-0 ps-3">
+              <li>Train/Test split: 80% / 20%</li>
+              <li>Cross-validation: 5-fold</li>
+              <li>Random state: 42 (reproducible)</li>
+              <li>Hyperparameter tuning: RF &amp; XGBoost</li>
+            </ul>
+          </div>
+
+          <div class="d-grid">
+            <button type="submit" class="btn btn-success btn-lg" id="trainBtn">
+              <i class="fas fa-play me-2"></i>Start Training
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Models info -->
+  <div class="col-lg-8">
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-header bg-dark text-white fw-semibold">
+        <i class="fas fa-robot me-2"></i>Models to be Trained
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          {% set mlist = [
+            ('Linear Regression', 'chart-line', 'primary', 'Baseline linear model.', 'No tuning'),
+            ('Random Forest', 'tree', 'success', 'Ensemble of decision trees.', 'RandomizedSearchCV'),
+            ('Gradient Boosting', 'rocket', 'warning', 'Sequential boosting regressor.', 'No tuning'),
+            ('XGBoost', 'bolt', 'danger', 'Extreme gradient boosting.', 'RandomizedSearchCV'),
+          ] %}
+          {% for name, icon, color, desc, tuning in mlist %}
+          <div class="col-md-6">
+            <div class="border rounded p-3 h-100">
+              <div class="d-flex align-items-center mb-2">
+                <span class="badge bg-{{ color }} me-2 p-2"><i class="fas fa-{{ icon }}"></i></span>
+                <strong>{{ name }}</strong>
+              </div>
+              <p class="text-muted small mb-1">{{ desc }}</p>
+              <span class="badge bg-light text-dark border small">Tuning: {{ tuning }}</span>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Training pipeline -->
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-light fw-semibold">
+        <i class="fas fa-sitemap me-2"></i>Training Pipeline
+      </div>
+      <div class="card-body">
+        <div class="pipeline-steps">
+          {% set pipe_steps = [
+            ('1', 'broom', 'Data Cleaning', 'Remove duplicates, drop rows with missing target values'),
+            ('2', 'cut', 'Train/Test Split', '80% training, 20% test (held out until final evaluation)'),
+            ('3', 'filter', 'Preprocessing', 'Median imputation + StandardScaler (fit on train only)'),
+            ('4', 'chart-line', 'Feature Analysis', 'Pearson correlation with target variable'),
+            ('5', 'brain', 'Model Training', 'Train all 4 models on preprocessed training data'),
+            ('6', 'rotate', 'Cross-Validation', '5-fold CV on training data — no test contamination'),
+            ('7', 'sliders', 'Hyperparameter Tuning', 'RandomizedSearchCV for RF and XGBoost'),
+            ('8', 'trophy', 'Best Model Selection', 'Highest R² on held-out test set wins'),
+            ('9', 'save', 'Save Artifacts', 'best_model.pkl, preprocessing.pkl, metadata.json'),
+          ] %}
+          {% for num, icon, title, desc in pipe_steps %}
+          <div class="d-flex mb-2">
+            <div class="pipeline-num me-3 flex-shrink-0">{{ num }}</div>
+            <div>
+              <span class="fw-semibold small"><i class="fas fa-{{ icon }} me-1 text-success"></i>{{ title }}</span>
+              <p class="text-muted small mb-0">{{ desc }}</p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('trainForm').addEventListener('submit', function() {
+  const btn = document.getElementById('trainBtn');
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Starting...';
+  btn.disabled = true;
+});
+</script>
+{% endblock %}
